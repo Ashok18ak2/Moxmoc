@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="invoice-container" id="invoiceContainer">
+        <header>
+            <div class="company-details">
+                <h1>Maxmoc Motor Works India Private Limited</h1>
+                <p>3/96 N, Panjampatty, Alamarathupatti, Dindigul - 624303</p>
+                <p>Tel: 9952823148 | GST No: 33AAQCM2589R1ZG</p>
+            </div>
+            <div class="logo">
+                <img src="/img/Logo.png" alt="Company Logo" id="logoImage">
+            </div>
+        </header>
+
+        <section class="customer-details">
+            <div class="customer-info">
+                <h2>Customer Details</h2>
+                <p><strong>Name:</strong> <span id="customerNameDisplay"></span></p>
+                <p><strong>Address:</strong> <span id="customerAddressDisplay"></span></p>
+                <p><strong>Email:</strong> <span id="customerEmailDisplay"></span></p>
+                <p><strong>Phone:</strong> <span id="customerPhoneDisplay"></span></p>
+            </div>
+            <div class="invoice-info">
+                <h2>Invoice Details</h2>
+                <p><strong>Invoice No:</strong> <span id="invoiceNumberDisplay"></span></p>
+                <p><strong>Date:</strong> <span id="invoiceDateDisplay"></span></p>
+                <p><strong>Po Date:</strong> <span id="dueDateDisplay"></span></p>
+            </div>
+        </section>
+
+        <section class="invoice-content">
+            <h2>Invoice Quotation</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Products</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceTableBody">
+                    <!-- Invoice items will be inserted here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                        <td id="subtotalDisplay">Rs.0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Tax (10%):</strong></td>
+                        <td id="taxDisplay">Rs.0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                        <td id="totalDisplay"><strong>Rs.0.00</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+    </div>
+    <button id="savePdfButton">Save as PDF</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retrieve data from localStorage
+            const data = JSON.parse(localStorage.getItem('invoiceData'));
+
+            if (data) {
+                // Update invoice display with customer info
+                document.getElementById('customerNameDisplay').textContent = data.customerName;
+                document.getElementById('customerAddressDisplay').textContent = data.customerAddress;
+                document.getElementById('customerEmailDisplay').textContent = data.customerEmail;
+                document.getElementById('customerPhoneDisplay').textContent = data.customerPhone;
+                document.getElementById('invoiceNumberDisplay').textContent = data.invoiceNumber;
+                document.getElementById('invoiceDateDisplay').textContent = data.invoiceDate;
+                document.getElementById('dueDateDisplay').textContent = data.dueDate;
+
+                // Update invoice table
+                const invoiceTableBody = document.getElementById('invoiceTableBody');
+                let subtotal = 0;
+
+                data.products.forEach(product => {
+                    const total = product.quantity * product.unitPrice;
+                    subtotal += total;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.productName}</td>
+                        <td>${product.quantity}</td>
+                        <td>Rs.${parseFloat(product.unitPrice).toFixed(2)}</td>
+                        <td>Rs.${total.toFixed(2)}</td>
+                    `;
+                    invoiceTableBody.appendChild(row);
+                });
+
+                // Calculate tax and total
+                const tax = subtotal * 0.10;
+                const total = subtotal + tax;
+
+                document.getElementById('subtotalDisplay').textContent = `Rs.${subtotal.toFixed(2)}`;
+                document.getElementById('taxDisplay').textContent = `Rs.${tax.toFixed(2)}`;
+                document.getElementById('totalDisplay').textContent = `Rs.${total.toFixed(2)}`;
+            }
+        });
+
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');  // A4 size in mm
+
+            const invoiceElement = document.getElementById('invoiceContainer');
+
+            html2canvas(invoiceElement, { scale: 2 }).then(canvas => {  // Balanced scale for quality and file size
+                const imgData = canvas.toDataURL('image/jpeg', 0.8);  // Compress image data
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    position -= pageHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save('invoice.pdf');
+            });
+        });
+    </script>
+</body>
+</html>

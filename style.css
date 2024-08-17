@@ -1,0 +1,199 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.form-container {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container label {
+  margin-top: 10px;
+}
+
+.form-container input {
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.form-container th, .form-container td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.form-container th {
+  background-color: #f4f4f4;
+}
+
+.form-container tfoot {
+  text-align: right;
+}
+
+.form-container tfoot td {
+  border: none;
+}
+
+.form-container #addProductButton {
+  padding: 10px;
+  background-color: #1B56A5;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-container #addProductButton:hover {
+  background-color: #218838;
+}
+
+.form-container .removeProductButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-container .removeProductButton:hover {
+  background-color: #c82333;
+}
+
+.invoice-container {
+  width: 80%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#invoiceContainer {
+  width: 210mm; /* A4 width */
+  min-height: 157mm; /* A4 height */
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #000;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.company-details {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.company-details h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.company-details p {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+}
+
+.logo img {
+  max-width: 150px;
+}
+
+.customer-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.customer-info, .invoice-info {
+  width: 48%;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 5px;
+}
+
+.invoice-content {
+  margin-top: 20px;
+}
+
+.invoice-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-content table, .invoice-content th, .invoice-content td {
+  border: 1px solid #000;
+}
+
+.invoice-content th, .invoice-content td {
+  padding: 10px;
+  text-align: left;
+}
+
+.invoice-content th {
+  background-color: #f4f4f4;
+}
+
+.invoice-content tfoot td {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.text-right {
+  text-align: right;
+}
+
+#savePdfButton {
+  padding: 10px;
+  background-color: #1B56A5;
+  margin-left: 11.5%;
+  margin-top: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#savePdfButton:hover {
+  background-color: #218838;
+}
+#productDropdown{
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 5px;
+}

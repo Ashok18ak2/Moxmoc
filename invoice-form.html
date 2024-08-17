@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Data Entry</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="form-container">
+        <header>
+            <div class="company-details">
+                <h1>Maxmoc Motor Works India Private Limited</h1>
+                <p>3/96 N, Panjampatty, Alamarathupatti, Dindigul - 624303</p>
+                <p>Tel: 9952823148 | GST No: 33AAQCM2589R1ZG</p>
+            </div>
+            <div class="logo">
+                <img src="/img/Logo.png" alt="Company Logo" id="logoImage">
+            </div>
+        </header>
+        
+        <h2>Enter Invoice Data</h2>
+        <form id="invoiceForm">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" required><br>
+
+            <label for="customerAddress">Customer Address:</label>
+            <input type="text" id="customerAddress" name="customerAddress" required><br>
+
+            <label for="customerEmail">Customer Email:</label>
+            <input type="email" id="customerEmail" name="customerEmail" required><br>
+
+            <label for="customerPhone">Customer Phone:</label>
+            <input type="tel" id="customerPhone" name="customerPhone" required><br>
+
+            <label for="invoiceNumber">Invoice Number:</label>
+            <input type="text" id="invoiceNumber" name="invoiceNumber" required><br>
+
+            <label for="invoiceDate">Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoiceDate" required><br>
+
+            <label for="dueDate">Po Date:</label>
+            <input type="date" id="dueDate" name="dueDate" required><br>
+
+            <h3>Products</h3>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Product rows will be added here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <button type="button" id="addProductButton">Add Product</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set the current date as the default value for the invoice date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+
+            const productOptions = [
+                { value: 'Product 1', text: 'Product 1' },
+                { value: 'Product 2', text: 'Product 2' },
+                { value: 'Product 3', text: 'Product 3' }
+            ];
+
+            function createDropdownOptions(selectedProducts) {
+                const select = document.createElement('select');
+                select.name = 'product[]';
+                select.required = true;
+
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Select a product';
+                select.appendChild(defaultOption);
+
+                productOptions.forEach(option => {
+                    if (!selectedProducts.includes(option.value)) {
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.text;
+                        select.appendChild(opt);
+                    }
+                });
+
+                return select;
+            }
+
+            document.getElementById('productTableBody').addEventListener('click', function(event) {
+                if (event.target.classList.contains('removeProductButton')) {
+                    event.target.closest('tr').remove();
+                }
+            });
+
+            document.getElementById('invoiceForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const customerName = document.getElementById('customerName').value;
+                const customerAddress = document.getElementById('customerAddress').value;
+                const customerEmail = document.getElementById('customerEmail').value;
+                const customerPhone = document.getElementById('customerPhone').value;
+                const invoiceNumber = document.getElementById('invoiceNumber').value;
+                const invoiceDate = document.getElementById('invoiceDate').value;
+                const dueDate = document.getElementById('dueDate').value;
+
+                const productSelects = document.getElementsByName('product[]');
+                const quantities = document.getElementsByName('quantity[]');
+                const unitPrices = document.getElementsByName('unitPrice[]');
+                const products = [];
+                let total = 0;
+
+                for (let i = 0; i < productSelects.length; i++) {
+                    const productName = productSelects[i].value;
+                    const quantity = parseFloat(quantities[i].value);
+                    const unitPrice = parseFloat(unitPrices[i].value);
+                    const productTotal = quantity * unitPrice;
+
+                    if (productName && !isNaN(quantity) && !isNaN(unitPrice)) {
+                        products.push({
+                            productName,
+                            quantity,
+                            unitPrice
+                        });
+
+                        total += productTotal;
+                    }
+                }
+
+                localStorage.setItem('invoiceData', JSON.stringify({
+                    customerName,
+                    customerAddress,
+                    customerEmail,
+                    customerPhone,
+                    invoiceNumber,
+                    invoiceDate,
+                    dueDate,
+                    products
+                }));
+
+                window.location.href = 'invoice-detail.html';
+            });
+        });
+    </script>
+</body>
+</html>
